@@ -44,6 +44,15 @@ export type PreorderResponse = {
   meta: PreorderMeta;
 };
 
+export type PreorderPayload = {
+  name: string;
+  products: number;
+  preorderWhen: string;
+  startsAt: string;
+  endsAt?: string | null;
+  isActive: boolean;
+};
+
 export type GetPreordersParams = {
   search?: string;
   status?: PreorderStatusFilter;

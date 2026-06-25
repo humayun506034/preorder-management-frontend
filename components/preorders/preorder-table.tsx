@@ -3,6 +3,9 @@ import type { Preorder } from "@/types/preorder";
 type PreorderTableProps = {
   preorders: Preorder[];
   isLoading: boolean;
+  onEdit: (preorder: Preorder) => void;
+  onStatusToggle: (preorder: Preorder) => void;
+  updatingStatusId: string | null;
 };
 
 const formatDate = (value: string | null) => {
@@ -59,10 +62,23 @@ function DeleteIcon() {
   );
 }
 
-function StatusSwitch({ isActive }: { isActive: boolean }) {
+function StatusSwitch({
+  isActive,
+  isUpdating,
+  onToggle,
+}: {
+  isActive: boolean;
+  isUpdating: boolean;
+  onToggle: () => void;
+}) {
   return (
-    <span
-      className={`inline-flex h-5 w-8 items-center rounded-md p-1 ${
+    <button
+      type="button"
+      aria-label={isActive ? "Deactivate preorder" : "Activate preorder"}
+      aria-pressed={isActive}
+      disabled={isUpdating}
+      onClick={onToggle}
+      className={`inline-flex h-5 w-8 items-center rounded-md p-1 transition disabled:cursor-not-allowed disabled:opacity-60 ${
         isActive ? "bg-neutral-900" : "bg-neutral-200"
       }`}
     >
@@ -71,11 +87,17 @@ function StatusSwitch({ isActive }: { isActive: boolean }) {
           isActive ? "translate-x-3" : "translate-x-0"
         }`}
       />
-    </span>
+    </button>
   );
 }
 
-export function PreorderTable({ preorders, isLoading }: PreorderTableProps) {
+export function PreorderTable({
+  preorders,
+  isLoading,
+  onEdit,
+  onStatusToggle,
+  updatingStatusId,
+}: PreorderTableProps) {
   return (
     <div className="max-w-full overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
       <table className="w-full min-w-[920px] border-collapse text-left text-sm">
@@ -114,13 +136,18 @@ export function PreorderTable({ preorders, isLoading }: PreorderTableProps) {
                 <td className="px-3 py-2">{formatDate(item.startsAt)}</td>
                 <td className="px-3 py-2">{formatDate(item.endsAt)}</td>
                 <td className="px-3 py-2">
-                  <StatusSwitch isActive={item.isActive} />
+                  <StatusSwitch
+                    isActive={item.isActive}
+                    isUpdating={updatingStatusId === item.id}
+                    onToggle={() => onStatusToggle(item)}
+                  />
                 </td>
                 <td className="px-3 py-2">
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       aria-label={`Edit ${item.name}`}
+                      onClick={() => onEdit(item)}
                       className="grid h-8 w-8 place-items-center rounded-lg border border-neutral-200 bg-white text-neutral-700 transition hover:bg-neutral-50"
                     >
                       <EditIcon />

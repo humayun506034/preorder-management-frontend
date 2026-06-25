@@ -1,6 +1,11 @@
 import { apiClient } from "@/lib/api-client";
 import { defaultFilters } from "@/lib/preorder-options";
-import type { GetPreordersParams, PreorderResponse } from "@/types/preorder";
+import type {
+  GetPreordersParams,
+  Preorder,
+  PreorderPayload,
+  PreorderResponse,
+} from "@/types/preorder";
 
 export const getPreorders = async ({
   search = defaultFilters.search,
@@ -20,6 +25,28 @@ export const getPreorders = async ({
       limit,
     },
   });
+
+  return response.data;
+};
+
+export const createPreorder = async (payload: PreorderPayload) => {
+  const response = await apiClient.post<{
+    success: boolean;
+    statusCode: number;
+    message: string;
+    data: Preorder;
+  }>("/preorder", payload);
+
+  return response.data;
+};
+
+export const updatePreorder = async (id: string, payload: PreorderPayload) => {
+  const response = await apiClient.patch<{
+    success: boolean;
+    statusCode: number;
+    message: string;
+    data: Preorder;
+  }>(`/preorder/${id}`, payload);
 
   return response.data;
 };

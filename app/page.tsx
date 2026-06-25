@@ -1,8 +1,5 @@
+import PreorderManagementPage from "@/components/preorders/preorder-management-page";
 
 export default function Home() {
-  return (
-    <div>
-      <h1>Hello World</h1>
-    </div>
-  );
+  return <PreorderManagementPage />;
 }
